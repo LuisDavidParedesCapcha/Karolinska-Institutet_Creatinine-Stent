@@ -1,0 +1,334 @@
+---
+title: "Problem 2: Stent Trial — Effect of Stenting on Stroke Risk"
+subtitle: "Introduction to R — Doctoral-Level Analysis"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_caption: true
+    latex_engine: pdflatex
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    highlight: tango
+    number_sections: true
+    fig_caption: true
+geometry: margin=2.5cm
+fontsize: 12pt
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{float}
+  - \usepackage{caption}
+  - \captionsetup[table]{skip=5pt}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo      = TRUE,
+  message   = FALSE,
+  warning   = FALSE,
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5,
+  out.width = "90%"
+)
+```
+
+---
+
+# Background
+
+A randomized clinical trial evaluated the effect of **coronary stent placement** in stroke patients at risk for a further stroke event, relative to a control group receiving **standard treatment without a stent**. Patients were followed up at **30 days** and **365 days** after the index stroke. The trial was eventually stopped prematurely owing to safety concerns.
+
+---
+
+# Task 1: Read in `stent.txt`
+
+```{r task1-read}
+# Load required libraries
+library(tidyverse)    # data manipulation & ggplot2
+library(knitr)        # kable tables
+library(kableExtra)   # enhanced table formatting
+library(epitools)     # odds ratio with CI
+library(scales)       # percent formatting on plots
+
+# Read the data (space-separated, with header)
+stent_raw <- read.table(
+  "stent.txt",
+  header           = TRUE,
+  sep              = "",          # any whitespace
+  stringsAsFactors = FALSE
+)
+
+cat("Dimensions:", nrow(stent_raw), "rows ×", ncol(stent_raw), "columns\n\n")
+head(stent_raw, 8) |>
+  kable(caption = "First eight rows of the raw stent dataset.") |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+---
+
+# Task 2: Define Informative Variable Names
+
+```{r task2-rename}
+# Rename columns to be self-documenting
+stent_raw <- stent_raw |>
+  rename(
+    patient_id      = V1,   # unique patient identifier
+    treatment_group = V2,   # 1 = control, 2 = stent
+    outcome_30d     = V3,   # stroke at 30 days  (0 = no, 1 = yes)
+    outcome_365d    = V4    # stroke at 365 days (0 = no, 1 = yes)
+  )
+
+cat("Updated variable names:\n")
+names(stent_raw)
+```
+
+---
+
+# Task 3: Convert Grouping Variables to Factors
+
+```{r task3-factors}
+stent <- stent_raw |>
+  mutate(
+    treatment_group = factor(
+      treatment_group,
+      levels = c(1, 2),
+      labels = c("Control (no stent)", "Treatment (stent)")
+    ),
+    outcome_30d = factor(
+      outcome_30d,
+      levels = c(0, 1),
+      labels = c("No Stroke", "Stroke")
+    ),
+    outcome_365d = factor(
+      outcome_365d,
+      levels = c(0, 1),
+      labels = c("No Stroke", "Stroke")
+    )
+  )
+
+# Confirm structure
+str(stent)
+cat("\nSample sizes per group:\n")
+table(stent$treatment_group)
+```
+
+---
+
+# Task 4: Frequency Tables
+
+## Treatment vs Outcome at 30 Days
+
+```{r task4-table30}
+# Cross-tabulation: treatment group × 30-day outcome
+tab_30d <- table(
+  `Treatment Group` = stent$treatment_group,
+  `30-Day Outcome`  = stent$outcome_30d
+)
+
+# Display with row and column totals
+addmargins(tab_30d) |>
+  kable(
+    caption  = "Frequency table: treatment group vs. outcome at 30-day follow-up. Row margins show group totals; column margins show overall totals.",
+    booktabs = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped")) |>
+  add_header_above(c(" " = 1, "30-Day Stroke Outcome" = 2, " " = 1))
+
+# Row proportions (%)
+cat("\nRow proportions (%):\n")
+prop.table(tab_30d, margin = 1) |>
+  round(4) |>
+  `*`(100) |>
+  addmargins() |>
+  kable(
+    caption  = "Row-wise proportions (%) for 30-day outcome by treatment group.",
+    booktabs = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+## Treatment vs Outcome at 365 Days
+
+```{r task4-table365}
+# Cross-tabulation: treatment group × 365-day outcome
+tab_365d <- table(
+  `Treatment Group`  = stent$treatment_group,
+  `365-Day Outcome`  = stent$outcome_365d
+)
+
+addmargins(tab_365d) |>
+  kable(
+    caption  = "Frequency table: treatment group vs. outcome at 365-day follow-up.",
+    booktabs = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped")) |>
+  add_header_above(c(" " = 1, "365-Day Stroke Outcome" = 2, " " = 1))
+
+cat("\nRow proportions (%):\n")
+prop.table(tab_365d, margin = 1) |>
+  round(4) |>
+  `*`(100) |>
+  addmargins() |>
+  kable(
+    caption  = "Row-wise proportions (%) for 365-day outcome by treatment group.",
+    booktabs = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+---
+
+# Task 5: Plot — Proportion with Stroke at 30-Day Follow-Up
+
+```{r task5-plot, fig.cap="Proportion of patients who experienced a stroke at 30-day follow-up, by treatment group. Error bars represent 95% Wilson confidence intervals. Labels above each bar indicate the observed proportion and the absolute count (n events / N total)."}
+
+# Compute proportions and Wilson 95% CI per treatment group
+prop_30d <- stent |>
+  group_by(treatment_group) |>
+  summarise(
+    n_stroke = sum(outcome_30d == "Stroke"),
+    n_total  = n(),
+    .groups  = "drop"
+  ) |>
+  mutate(
+    prop       = n_stroke / n_total,
+    ci_lower   = mapply(function(x, n) prop.test(x, n)$conf.int[1], n_stroke, n_total),
+    ci_upper   = mapply(function(x, n) prop.test(x, n)$conf.int[2], n_stroke, n_total),
+    label_text = paste0(scales::percent(prop, accuracy = 0.1),
+                        "\n(", n_stroke, "/", n_total, ")")
+  )
+
+ggplot(prop_30d, aes(x = treatment_group, y = prop, fill = treatment_group)) +
+  geom_col(width = 0.52, alpha = 0.88, colour = "grey30", linewidth = 0.4) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
+                width = 0.12, linewidth = 0.7, colour = "grey20") +
+  geom_text(aes(label = label_text),
+            vjust = -0.6, size = 3.6, fontface = "bold", colour = "grey20") +
+  scale_fill_manual(values = c("Control (no stent)"   = "#4E9BB5",
+                                "Treatment (stent)"   = "#D4706A")) +
+  scale_y_continuous(
+    labels = scales::percent_format(accuracy = 1),
+    limits = c(0, 0.40),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  labs(
+    title    = "Stroke Incidence at 30-Day Follow-Up by Treatment Group",
+    subtitle = "Error bars: 95% Wilson confidence intervals",
+    x        = "Treatment Group",
+    y        = "Proportion with Stroke (%)",
+    fill     = "Treatment Group"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    plot.title      = element_text(face = "bold", size = 13),
+    plot.subtitle   = element_text(size = 9.5, colour = "grey40"),
+    legend.position = "none",
+    axis.title      = element_text(face = "bold"),
+    axis.text.x     = element_text(size = 11)
+  )
+```
+
+---
+
+# Task 6: Odds Ratio for Stroke at 30 Days (Stent vs. Control)
+
+```{r task6-odds-ratio}
+# Construct 2×2 contingency table in the correct orientation for epitools:
+# Rows: exposure (treatment group); Columns: outcome (stroke yes/no)
+# epitools::oddsratio expects: rows = exposure, cols = outcome (disease yes/no)
+
+tab_or <- matrix(
+  c(
+    # No Stroke, Stroke  (order: non-event first, event second)
+    sum(stent$treatment_group == "Control (no stent)"  & stent$outcome_30d == "No Stroke"),
+    sum(stent$treatment_group == "Control (no stent)"  & stent$outcome_30d == "Stroke"),
+    sum(stent$treatment_group == "Treatment (stent)"   & stent$outcome_30d == "No Stroke"),
+    sum(stent$treatment_group == "Treatment (stent)"   & stent$outcome_30d == "Stroke")
+  ),
+  nrow = 2, byrow = TRUE,
+  dimnames = list(
+    Exposure = c("Control", "Stent"),
+    Outcome  = c("No Stroke", "Stroke")
+  )
+)
+
+cat("2 × 2 contingency table:\n")
+print(tab_or)
+
+# Calculate OR using epitools (Wald method)
+or_result <- oddsratio(tab_or, method = "wald")
+
+# Extract and display key results
+or_val  <- or_result$measure["Stent", "estimate"]
+ci_lo   <- or_result$measure["Stent", "lower"]
+ci_hi   <- or_result$measure["Stent", "upper"]
+p_chi   <- or_result$p.value["Stent", "chi.square"]   # or Fisher
+
+cat("\n--- Odds Ratio Results ---\n")
+cat(sprintf("  OR  (Stent vs. Control): %.4f\n", or_val))
+cat(sprintf("  95%% CI                 : %.4f – %.4f\n", ci_lo, ci_hi))
+cat(sprintf("  Chi-squared p-value    : %.6f\n\n", p_chi))
+
+# Also compute via logistic regression for consistency check
+glm_30d <- glm(outcome_30d ~ treatment_group, data = stent, family = binomial)
+or_glm  <- exp(coef(glm_30d)["treatment_groupTreatment (stent)"])
+ci_glm  <- exp(confint(glm_30d)["treatment_groupTreatment (stent)", ])
+
+cat("Cross-check via logistic regression:\n")
+cat(sprintf("  OR  : %.4f\n",          or_glm))
+cat(sprintf("  95%% CI: %.4f – %.4f\n", ci_glm[1], ci_glm[2]))
+
+# Formatted summary table
+tibble(
+  Comparison    = "Stent vs. Control",
+  OR            = round(or_val, 4),
+  CI_lower_95   = round(ci_lo,  4),
+  CI_upper_95   = round(ci_hi,  4),
+  `p-value`     = formatC(p_chi, format = "f", digits = 6)
+) |>
+  kable(
+    caption   = "Odds ratio (OR) and 95% confidence interval for stroke at 30-day follow-up in the stent group relative to the control group (Wald method).",
+    col.names = c("Comparison", "OR", "95% CI Lower", "95% CI Upper", "p-value"),
+    booktabs  = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+---
+
+# Task 7: Interpretation — Is the OR Consistent with Early Trial Termination?
+
+## Statistical Reasoning
+
+The odds ratio calculated above is **OR = `r round(or_val, 3)`** (95% CI: `r round(ci_lo, 3)`–`r round(ci_hi, 3)`; p `r if(p_chi < 0.001) "< 0.001" else paste("=", round(p_chi, 4))`), comparing the **stent group** (treatment) against the **control group** at **30-day follow-up**.
+
+An OR **greater than 1.0** indicates that patients who received the stent had **higher odds of experiencing a stroke at 30 days** compared to those who received standard care. In this dataset, the OR of `r round(or_val, 3)` reflects a substantially elevated short-term stroke risk in the stent group. The 95% confidence interval does `r if(ci_lo > 1) "not include 1.0, confirming statistical significance at the 5% level" else "include 1.0"`.
+
+## Clinical Reasoning
+
+This finding is **entirely consistent** with the decision to stop the trial prematurely. The rationale proceeds as follows:
+
+1. **Direction of effect**: The OR > 1.0 means that, counter to the hypothesis that stenting would protect patients, the intervention was *associated with more strokes*, not fewer, in the short term. This is a signal of **potential harm**, not benefit.
+
+2. **Magnitude**: An OR of `r round(or_val, 2)` represents a clinically meaningful increase in short-term stroke risk. In acute cardiovascular trials, even modest relative increases in a hard endpoint such as stroke warrant serious attention.
+
+3. **Safety monitoring**: Data Safety Monitoring Boards (DSMBs) apply pre-specified stopping rules — typically based on interim analyses with adjusted alpha levels (e.g., O'Brien-Fleming or Pocock boundaries). An OR of this magnitude at 30 days would very likely trigger such a boundary.
+
+4. **Ethical obligation**: When an interim analysis provides compelling evidence of harm (or net futility), continuation of the trial would expose enrolled patients to unnecessary risk, violating the principle of equipoise. Early termination in this context is not only statistically justified but ethically mandated.
+
+## Conclusion
+
+> **The OR of `r round(or_val, 3)` (95% CI: `r round(ci_lo, 3)`–`r round(ci_hi, 3)`) is fully consistent with — and provides a compelling statistical rationale for — the early termination of this trial on safety grounds.** The stent, rather than reducing the risk of recurrent stroke at 30 days, was associated with a substantially higher odds of this outcome compared to standard care. This excess risk constitutes precisely the type of safety signal that justifies premature trial closure.
+
+---
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```

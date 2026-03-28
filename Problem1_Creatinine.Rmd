@@ -1,0 +1,310 @@
+---
+title: "Problem 1: Association Between Age and Serum Creatinine Levels"
+subtitle: "Introduction to R — Doctoral-Level Analysis"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_caption: true
+    latex_engine: pdflatex
+    keep_tex: false
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    highlight: tango
+    number_sections: true
+    fig_caption: true
+geometry: margin=2.5cm
+fontsize: 12pt
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{float}
+  - \usepackage{caption}
+  - \captionsetup[table]{skip=5pt}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = TRUE,
+  message    = FALSE,
+  warning    = FALSE,
+  fig.align  = "center",
+  fig.width  = 7,
+  fig.height = 5,
+  out.width  = "90%"
+)
+```
+
+---
+
+# Background
+
+Researchers aimed to study the association between **age** and **serum creatinine levels** (log\textsubscript{10}-transformed, in mg/dL) in a cohort of 294 patients at elevated risk for myocardial infarction. Additional covariates collected include sex, diabetes status, and serum sodium levels (log\textsubscript{10}-transformed, in mEq/L).
+
+---
+
+# Task (a): Read in the Raw Data
+
+```{r task-a-read-data}
+# Load required libraries
+library(tidyverse)    # data manipulation & visualisation
+library(tableone)     # descriptive statistics
+library(knitr)        # tables
+library(kableExtra)   # formatted tables
+library(broom)        # tidy regression output
+library(ggpubr)       # publication-ready plots
+
+# Read in the raw data
+creatinine_raw <- read.table(
+  "Creatinine.txt",
+  header      = TRUE,
+  sep         = "\t",
+  stringsAsFactors = FALSE
+)
+
+# Preview dimensions and first rows
+cat("Dimensions:", nrow(creatinine_raw), "rows ×", ncol(creatinine_raw), "columns\n")
+head(creatinine_raw, 6) |> kable(caption = "First six rows of the raw dataset.")
+```
+
+---
+
+# Task (b): Convert Grouping Variables to Factors
+
+```{r task-b-factors}
+# Create an analysis-ready data frame with informative factor labels
+creatinine <- creatinine_raw |>
+  mutate(
+    Sex      = factor(Sex,      levels = c(0, 1),
+                      labels = c("Female", "Male")),
+    Diabetes = factor(Diabetes, levels = c(0, 1),
+                      labels = c("No Diabetes", "Diabetes"))
+  ) |>
+  rename(
+    Age               = Age,
+    Creatinine_serum  = Creatinine_serum,
+    Sodium_serum      = Sodium_serum
+  )
+
+# Verify factor conversion
+str(creatinine)
+```
+
+---
+
+# Task (c): Descriptive Statistics
+
+```{r task-c-descriptive}
+# Define variables and strata for TableOne
+vars      <- c("Age", "Sex", "Creatinine_serum", "Sodium_serum")
+cat_vars  <- c("Sex")
+strata    <- "Diabetes"
+
+# Build descriptive table stratified by diabetes status
+table1 <- CreateTableOne(
+  vars        = vars,
+  factorVars  = cat_vars,
+  strata      = strata,
+  data        = creatinine,
+  addOverall  = TRUE
+)
+
+# Print with appropriate formatting
+print(
+  table1,
+  showAllLevels = TRUE,
+  formatOptions = list(big.mark = ","),
+  quote         = FALSE,
+  noSpaces      = TRUE,
+  printToggle   = FALSE
+) |>
+  kable(
+    caption  = "Descriptive statistics of the study cohort, overall and stratified by diabetes status. Continuous variables shown as mean ± SD; categorical variables as n (%).",
+    booktabs = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"), font_size = 10)
+```
+
+---
+
+# Task (d): Mean Creatinine by Diabetes Status with 95% CI
+
+```{r task-d-mean-ci}
+# Calculate mean, SD, n, SE and 95% CI for each diabetes group
+mean_ci <- creatinine |>
+  group_by(Diabetes) |>
+  summarise(
+    n        = n(),
+    Mean     = mean(Creatinine_serum, na.rm = TRUE),
+    SD       = sd(Creatinine_serum,   na.rm = TRUE),
+    SE       = SD / sqrt(n),
+    CI_lower = Mean - qt(0.975, df = n - 1) * SE,
+    CI_upper = Mean + qt(0.975, df = n - 1) * SE,
+    .groups  = "drop"
+  ) |>
+  mutate(across(where(is.numeric), \(x) round(x, 4)))
+
+# Display formatted table
+mean_ci |>
+  kable(
+    caption  = "Mean serum creatinine level (log10-transformed, mg/dL) with 95% confidence intervals, stratified by diabetes status.",
+    col.names = c("Diabetes Status", "N", "Mean", "SD", "SE", "95% CI Lower", "95% CI Upper"),
+    booktabs  = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+---
+
+# Task (e): Distribution of Creatinine Levels by Diabetes Status
+
+```{r task-e-distribution-plot, fig.cap="Distribution of log10-transformed serum creatinine levels by diabetes status. Violin plots show the full distribution; overlaid box plots indicate the median and interquartile range; individual data points are jittered. The horizontal dashed line marks the overall cohort mean."}
+
+overall_mean <- mean(creatinine$Creatinine_serum, na.rm = TRUE)
+
+ggplot(creatinine, aes(x = Diabetes, y = Creatinine_serum, fill = Diabetes)) +
+  geom_violin(alpha = 0.45, trim = FALSE, colour = "grey40", linewidth = 0.4) +
+  geom_boxplot(width = 0.18, alpha = 0.85, outlier.shape = NA,
+               colour = "grey20", linewidth = 0.5) +
+  geom_jitter(aes(colour = Diabetes), width = 0.08, alpha = 0.35, size = 1.0) +
+  geom_hline(yintercept = overall_mean, linetype = "dashed",
+             colour = "grey40", linewidth = 0.6) +
+  annotate("text", x = 0.57, y = overall_mean + 0.03,
+           label = paste0("Overall mean = ", round(overall_mean, 3)),
+           size = 3.0, colour = "grey30") +
+  scale_fill_manual(values  = c("No Diabetes" = "#4E9BB5", "Diabetes" = "#D4706A")) +
+  scale_colour_manual(values = c("No Diabetes" = "#2B6A80", "Diabetes" = "#A03030")) +
+  labs(
+    title    = "Distribution of Serum Creatinine by Diabetes Status",
+    subtitle = "log\u2081\u2080-transformed values (mg/dL)",
+    x        = "Diabetes Status",
+    y        = expression(log[10] ~ Creatinine ~ (mg/dL)),
+    fill     = "Diabetes Status",
+    colour   = "Diabetes Status"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    plot.title    = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(size = 10, colour = "grey40"),
+    legend.position = "none",
+    axis.title    = element_text(face = "bold")
+  )
+```
+
+---
+
+# Task (f): Creatinine as a Function of Age, by Diabetes Status
+
+```{r task-f-scatter-smooth, fig.cap="Serum creatinine level (log10-transformed, mg/dL) as a function of age, stratified by diabetes status. Smoothing curves (LOESS, 95% confidence bands shaded) are superimposed on the individual data points. Each panel corresponds to one diabetes stratum."}
+
+ggplot(creatinine, aes(x = Age, y = Creatinine_serum, colour = Diabetes)) +
+  geom_point(alpha = 0.45, size = 1.5) +
+  geom_smooth(method = "loess", se = TRUE, linewidth = 0.9, fill = "grey80") +
+  geom_smooth(method = "lm",   se = FALSE, linetype = "dashed",
+              linewidth = 0.6, colour = "grey30") +
+  facet_wrap(~ Diabetes, labeller = label_both) +
+  scale_colour_manual(values = c("No Diabetes" = "#4E9BB5", "Diabetes" = "#D4706A")) +
+  labs(
+    title    = "Serum Creatinine as a Function of Age by Diabetes Status",
+    subtitle = "Solid line: LOESS smoother (95% CI shaded); Dashed line: OLS linear fit",
+    x        = "Age (years)",
+    y        = expression(log[10] ~ Creatinine ~ (mg/dL)),
+    colour   = "Diabetes Status"
+  ) +
+  theme_bw(base_size = 12) +
+  theme(
+    plot.title    = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(size = 9.5, colour = "grey40"),
+    legend.position = "none",
+    strip.text    = element_text(face = "bold"),
+    axis.title    = element_text(face = "bold")
+  )
+```
+
+---
+
+# Task (g): Linear Regression of Creatinine on Age, by Diabetes Status
+
+## Model for Patients Without Diabetes
+
+```{r task-g-lm-nodiabetes}
+# Subset: patients without diabetes
+df_nodiab <- creatinine |> filter(Diabetes == "No Diabetes")
+
+# Fit linear model
+lm_nodiab <- lm(Creatinine_serum ~ Age, data = df_nodiab)
+
+# Tidy regression table
+tidy_nodiab <- tidy(lm_nodiab, conf.int = TRUE, conf.level = 0.95) |>
+  mutate(across(where(is.numeric), \(x) round(x, 5)))
+
+tidy_nodiab |>
+  kable(
+    caption   = "Linear regression of serum creatinine on age in patients WITHOUT diabetes (n = 159). Estimates are in log10-transformed creatinine units per year of age.",
+    col.names = c("Term", "Estimate", "Std. Error", "t-statistic", "p-value", "95% CI Lower", "95% CI Upper"),
+    booktabs  = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+
+# Model summary statistics
+glance(lm_nodiab) |>
+  select(r.squared, adj.r.squared, sigma, statistic, p.value, df, nobs) |>
+  mutate(across(where(is.numeric), \(x) round(x, 5))) |>
+  kable(
+    caption   = "Model summary statistics for the no-diabetes group.",
+    col.names = c("R²", "Adj. R²", "Residual SE", "F-statistic", "p-value", "df", "N"),
+    booktabs  = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+**Interpretation (No Diabetes):** `r if(coef(lm_nodiab)["Age"] > 0) "A positive" else "A negative"` association between age and serum creatinine was observed in patients without diabetes. For each additional year of age, serum creatinine (log\textsubscript{10}-transformed) changes by **`r round(coef(lm_nodiab)["Age"], 5)`** units (95% CI: `r round(confint(lm_nodiab)["Age",1], 5)` to `r round(confint(lm_nodiab)["Age",2], 5)`), with a p-value of `r round(summary(lm_nodiab)$coefficients["Age","Pr(>|t|)"], 4)`.
+
+---
+
+## Model for Patients With Diabetes
+
+```{r task-g-lm-diabetes}
+# Subset: patients with diabetes
+df_diab <- creatinine |> filter(Diabetes == "Diabetes")
+
+# Fit linear model
+lm_diab <- lm(Creatinine_serum ~ Age, data = df_diab)
+
+# Tidy regression table
+tidy_diab <- tidy(lm_diab, conf.int = TRUE, conf.level = 0.95) |>
+  mutate(across(where(is.numeric), \(x) round(x, 5)))
+
+tidy_diab |>
+  kable(
+    caption   = "Linear regression of serum creatinine on age in patients WITH diabetes (n = 135). Estimates are in log10-transformed creatinine units per year of age.",
+    col.names = c("Term", "Estimate", "Std. Error", "t-statistic", "p-value", "95% CI Lower", "95% CI Upper"),
+    booktabs  = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+
+# Model summary statistics
+glance(lm_diab) |>
+  select(r.squared, adj.r.squared, sigma, statistic, p.value, df, nobs) |>
+  mutate(across(where(is.numeric), \(x) round(x, 5))) |>
+  kable(
+    caption   = "Model summary statistics for the diabetes group.",
+    col.names = c("R²", "Adj. R²", "Residual SE", "F-statistic", "p-value", "df", "N"),
+    booktabs  = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"))
+```
+
+**Interpretation (Diabetes):** In patients with diabetes, age `r if(coef(lm_diab)["Age"] > 0) "is positively" else "is negatively"` associated with serum creatinine. Each additional year of age corresponds to a change of **`r round(coef(lm_diab)["Age"], 5)`** log\textsubscript{10}-units (95% CI: `r round(confint(lm_diab)["Age",1], 5)` to `r round(confint(lm_diab)["Age",2], 5)`; p = `r round(summary(lm_diab)$coefficients["Age","Pr(>|t|)"], 4)`).
+
+---
+
+# Session Information
+
+```{r session-info}
+sessionInfo()
+```
