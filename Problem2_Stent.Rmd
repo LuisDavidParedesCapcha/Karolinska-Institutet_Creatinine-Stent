@@ -1,7 +1,7 @@
 ---
 title: "Problem 2: Stent Trial - Effect of Stenting on Stroke Risk"
 subtitle: "Introduction to R"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+
 output:
   html_document:
     toc: true
@@ -62,9 +62,9 @@ stent_raw <- read.table(
 
 cat("Dimensions:", nrow(stent_raw), "rows x", ncol(stent_raw), "columns\n\n")
 
-head(stent_raw, 8) |>
+head(stent_raw, 5) |>
   kable(
-    caption  = "First eight rows of the raw stent dataset.",
+    caption  = "First rows of the raw stent dataset.",
     booktabs = TRUE
   ) |>
   kable_styling(font_size = 10, position = "center")
@@ -138,9 +138,7 @@ addmargins(tab_30d) |>
   add_header_above(c(" " = 1, "30-Day Stroke Outcome" = 2, " " = 1))
 
 # Row proportions
-prop.table(tab_30d, margin = 1) |>
-  round(4) |>
-  `*`(100) |>
+round(prop.table(tab_30d, margin = 1) * 100, 2) |>
   addmargins() |>
   kable(
     caption  = "Row proportions (%) for 30-day outcome by treatment group.",
@@ -165,9 +163,7 @@ addmargins(tab_365d) |>
   kable_styling(font_size = 10, position = "center") |>
   add_header_above(c(" " = 1, "365-Day Stroke Outcome" = 2, " " = 1))
 
-prop.table(tab_365d, margin = 1) |>
-  round(4) |>
-  `*`(100) |>
+round(prop.table(tab_30d, margin = 1) * 100, 2) |>
   addmargins() |>
   kable(
     caption  = "Row proportions (%) for 365-day outcome by treatment group.",
@@ -205,7 +201,7 @@ ggplot(prop_30d, aes(x = treatment_group, y = prop, fill = treatment_group)) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
                 width = 0.12, linewidth = 0.7, colour = "grey20") +
   geom_text(aes(label = label),
-            vjust = -0.6, size = 3.6, fontface = "bold", colour = "grey20") +
+            vjust = -2, size = 3.6, fontface = "bold", colour = "grey20") +
   scale_fill_manual(values = colores) +
   scale_y_continuous(
     labels = scales::percent_format(accuracy = 1),
@@ -300,10 +296,3 @@ This finding is **fully consistent** with the decision to stop the trial prematu
 
 The OR of `r round(or_val, 3)` (95% CI: `r round(ci_lo, 3)`-`r round(ci_hi, 3)`) is fully consistent with the early termination of this trial on safety grounds. The stent, rather than reducing the risk of recurrent stroke at 30 days, was associated with substantially higher odds of this outcome compared to standard care.
 
----
-
-# Session Information
-
-```{r session-info}
-sessionInfo()
-```
