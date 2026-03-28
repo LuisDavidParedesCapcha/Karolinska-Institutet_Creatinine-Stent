@@ -1,0 +1,607 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  12pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{caption}
+\captionsetup[table]{skip=5pt}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Problem 1: Association Between Age and Serum Creatinine Levels},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Problem 1: Association Between Age and Serum Creatinine Levels}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Introduction to R --- Doctoral-Level Analysis}
+\author{}
+\date{\vspace{-2.5em}Marzo 28, 2026}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{background}{%
+\section{Background}\label{background}}
+
+Researchers aimed to study the association between \textbf{age} and
+\textbf{serum creatinine levels} (log\textsubscript{10}-transformed, in
+mg/dL) in a cohort of 294 patients at elevated risk for myocardial
+infarction. Additional covariates collected include sex, diabetes
+status, and serum sodium levels (log\textsubscript{10}-transformed, in
+mEq/L).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-a-read-in-the-raw-data}{%
+\section{Task (a): Read in the Raw
+Data}\label{task-a-read-in-the-raw-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load required libraries}
+\FunctionTok{library}\NormalTok{(tidyverse)    }\CommentTok{\# data manipulation \& visualisation}
+\FunctionTok{library}\NormalTok{(tableone)     }\CommentTok{\# descriptive statistics}
+\FunctionTok{library}\NormalTok{(knitr)        }\CommentTok{\# tables}
+\FunctionTok{library}\NormalTok{(kableExtra)   }\CommentTok{\# formatted tables}
+\FunctionTok{library}\NormalTok{(broom)        }\CommentTok{\# tidy regression output}
+\FunctionTok{library}\NormalTok{(ggpubr)       }\CommentTok{\# publication{-}ready plots}
+
+\CommentTok{\# Read in the raw data}
+\NormalTok{creatinine\_raw }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}
+  \StringTok{"Data/Creatinine.txt"}\NormalTok{,}
+  \AttributeTok{header      =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{sep         =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{,}
+  \AttributeTok{stringsAsFactors =} \ConstantTok{FALSE}
+\NormalTok{)}
+
+\CommentTok{\# Preview dimensions and first rows}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Dimensions:"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(creatinine\_raw), }\StringTok{"rows ×"}\NormalTok{, }\FunctionTok{ncol}\NormalTok{(creatinine\_raw), }\StringTok{"columns}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Dimensions: 294 rows × 5 columns
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(creatinine\_raw, }\DecValTok{6}\NormalTok{) }\SpecialCharTok{|\textgreater{}} \FunctionTok{kable}\NormalTok{(}\AttributeTok{caption =} \StringTok{"First rows of the dataset."}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrr@{}}
+\caption{First rows of the dataset.}\tabularnewline
+\toprule\noalign{}
+Age & Sex & Diabetes & Creatinine\_serum & Sodium\_serum \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Age & Sex & Diabetes & Creatinine\_serum & Sodium\_serum \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+75 & 1 & 0 & 0.28 & 2.11 \\
+55 & 1 & 0 & 0.04 & 2.13 \\
+65 & 1 & 0 & 0.11 & 2.11 \\
+50 & 1 & 0 & 0.28 & 2.14 \\
+65 & 0 & 1 & 0.43 & 2.06 \\
+90 & 1 & 0 & 0.32 & 2.12 \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-b-convert-grouping-variables-to-factors}{%
+\section{Task (b): Convert Grouping Variables to
+Factors}\label{task-b-convert-grouping-variables-to-factors}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create an analysis{-}ready data frame with informative factor labels}
+\NormalTok{creatinine }\OtherTok{\textless{}{-}}\NormalTok{ creatinine\_raw }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{Sex      =} \FunctionTok{factor}\NormalTok{(Sex,      }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+                      \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Female"}\NormalTok{, }\StringTok{"Male"}\NormalTok{)),}
+    \AttributeTok{Diabetes =} \FunctionTok{factor}\NormalTok{(Diabetes, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+                      \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"No Diabetes"}\NormalTok{, }\StringTok{"Diabetes"}\NormalTok{))}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{rename}\NormalTok{(}
+    \AttributeTok{Age               =}\NormalTok{ Age,}
+    \AttributeTok{Creatinine\_serum  =}\NormalTok{ Creatinine\_serum,}
+    \AttributeTok{Sodium\_serum      =}\NormalTok{ Sodium\_serum}
+\NormalTok{  )}
+
+\CommentTok{\# Verify factor conversion}
+\FunctionTok{str}\NormalTok{(creatinine)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    294 obs. of  5 variables:
+##  $ Age             : num  75 55 65 50 65 90 75 60 65 75 ...
+##  $ Sex             : Factor w/ 2 levels "Female","Male": 2 2 2 2 1 2 2 2 1 2 ...
+##  $ Diabetes        : Factor w/ 2 levels "No Diabetes",..: 1 1 1 1 2 1 1 2 1 1 ...
+##  $ Creatinine_serum: num  0.28 0.04 0.11 0.28 0.43 0.32 0.08 0.04 0.18 0.6 ...
+##  $ Sodium_serum    : num  2.11 2.13 2.11 2.14 2.06 2.12 2.14 2.12 2.14 2.12 ...
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-c-descriptive-statistics}{%
+\section{Task (c): Descriptive
+Statistics}\label{task-c-descriptive-statistics}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Task (c): Descriptive Statistics}
+\NormalTok{vars      }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Age"}\NormalTok{, }\StringTok{"Sex"}\NormalTok{, }\StringTok{"Creatinine\_serum"}\NormalTok{, }\StringTok{"Sodium\_serum"}\NormalTok{)}
+\NormalTok{cat\_vars  }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Sex"}\NormalTok{)}
+\NormalTok{strata    }\OtherTok{\textless{}{-}} \StringTok{"Diabetes"}
+
+\NormalTok{table1 }\OtherTok{\textless{}{-}} \FunctionTok{CreateTableOne}\NormalTok{(}
+  \AttributeTok{vars       =}\NormalTok{ vars,}
+  \AttributeTok{factorVars =}\NormalTok{ cat\_vars,}
+  \AttributeTok{strata     =}\NormalTok{ strata,}
+  \AttributeTok{data       =}\NormalTok{ creatinine,}
+  \AttributeTok{addOverall =} \ConstantTok{TRUE}
+\NormalTok{)}
+
+\NormalTok{tab1\_mat }\OtherTok{\textless{}{-}} \FunctionTok{print}\NormalTok{(}
+\NormalTok{  table1,}
+  \AttributeTok{showAllLevels   =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{showTestDetails =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{formatOptions   =} \FunctionTok{list}\NormalTok{(}\AttributeTok{big.mark =} \StringTok{","}\NormalTok{),}
+  \AttributeTok{quote           =} \ConstantTok{FALSE}\NormalTok{,}
+  \AttributeTok{noSpaces        =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{printToggle     =} \ConstantTok{FALSE}
+\NormalTok{)}
+
+\CommentTok{\# Rellenar columna test manualmente}
+\NormalTok{tab1\_mat[}\FunctionTok{rownames}\NormalTok{(tab1\_mat) }\SpecialCharTok{==} \StringTok{"Age (mean (SD))"}\NormalTok{,            }\StringTok{"test"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"t{-}test"}
+\NormalTok{tab1\_mat[}\FunctionTok{rownames}\NormalTok{(tab1\_mat) }\SpecialCharTok{==} \StringTok{"Creatinine\_serum (mean (SD))"}\NormalTok{, }\StringTok{"test"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"t{-}test"}
+\NormalTok{tab1\_mat[}\FunctionTok{rownames}\NormalTok{(tab1\_mat) }\SpecialCharTok{==} \StringTok{"Sodium\_serum (mean (SD))"}\NormalTok{,   }\StringTok{"test"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"t{-}test"}
+\NormalTok{tab1\_mat[}\FunctionTok{rownames}\NormalTok{(tab1\_mat) }\SpecialCharTok{==} \StringTok{"Sex (\%)"}\NormalTok{,                    }\StringTok{"test"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"Chi{-}squared"}
+\NormalTok{tab1\_mat[}\FunctionTok{rownames}\NormalTok{(tab1\_mat) }\SpecialCharTok{==} \StringTok{""}\NormalTok{,                    }\StringTok{"test"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"Chi{-}squared"}
+
+
+\NormalTok{tab1\_mat }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable}\NormalTok{(}
+    \AttributeTok{caption  =} \StringTok{"Baseline characteristics by diabetes status. Mean (SD) or n (\%)."}\NormalTok{,}
+    \AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{,}
+    \AttributeTok{align =} \StringTok{"lcccccc"}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"hold\_position"}\NormalTok{, }\StringTok{"striped"}\NormalTok{), }
+                \AttributeTok{font\_size =} \DecValTok{10}\NormalTok{,}
+                \AttributeTok{position =} \StringTok{"center"}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{row\_spec}\NormalTok{(}\DecValTok{0}\NormalTok{, }\AttributeTok{bold =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begingroup\fontsize{10}{12}\selectfont
+
+\begin{longtable}[t]{llccccc}
+\caption{\label{tab:task-c-descriptive}Baseline characteristics by diabetes status. Mean (SD) or n (%).}\\
+\toprule
+\textbf{} & \textbf{level} & \textbf{Overall} & \textbf{No Diabetes} & \textbf{Diabetes} & \textbf{p} & \textbf{test}\\
+\midrule
+\cellcolor{gray!10}{n} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{294} & \cellcolor{gray!10}{171} & \cellcolor{gray!10}{123} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{}\\
+Age (mean (SD)) &  & 60.81 (11.94) & 61.81 (12.74) & 59.41 (10.61) & 0.089 & t-test\\
+\cellcolor{gray!10}{Sex (\%)} & \cellcolor{gray!10}{Female} & \cellcolor{gray!10}{103 (35.0)} & \cellcolor{gray!10}{49 (28.7)} & \cellcolor{gray!10}{54 (43.9)} & \cellcolor{gray!10}{0.010} & \cellcolor{gray!10}{Chi-squared}\\
+ & Male & 191 (65.0) & 122 (71.3) & 69 (56.1) &  & Chi-squared\\
+\cellcolor{gray!10}{Creatinine\_serum (mean (SD))} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{0.07 (0.17)} & \cellcolor{gray!10}{0.08 (0.18)} & \cellcolor{gray!10}{0.07 (0.15)} & \cellcolor{gray!10}{0.700} & \cellcolor{gray!10}{t-test}\\
+\addlinespace
+Sodium\_serum (mean (SD)) &  & 2.14 (0.02) & 2.14 (0.01) & 2.13 (0.02) & 0.048 & t-test\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-d-mean-creatinine-by-diabetes-status-with-95-ci}{%
+\section{Task (d): Mean Creatinine by Diabetes Status with 95\%
+CI}\label{task-d-mean-creatinine-by-diabetes-status-with-95-ci}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate mean, SD, n, SE and 95\% CI for each diabetes group}
+\NormalTok{mean\_ci }\OtherTok{\textless{}{-}}\NormalTok{ creatinine }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(Diabetes) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n        =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{Mean     =} \FunctionTok{mean}\NormalTok{(Creatinine\_serum, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{SD       =} \FunctionTok{sd}\NormalTok{(Creatinine\_serum,   }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{SE       =}\NormalTok{ SD }\SpecialCharTok{/} \FunctionTok{sqrt}\NormalTok{(n),}
+    \AttributeTok{CI\_lower =}\NormalTok{ Mean }\SpecialCharTok{{-}} \FunctionTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{, }\AttributeTok{df =}\NormalTok{ n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{*}\NormalTok{ SE,}
+    \AttributeTok{CI\_upper =}\NormalTok{ Mean }\SpecialCharTok{+} \FunctionTok{qt}\NormalTok{(}\FloatTok{0.975}\NormalTok{, }\AttributeTok{df =}\NormalTok{ n }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{*}\NormalTok{ SE,}
+    \AttributeTok{.groups  =} \StringTok{"drop"}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), \textbackslash{}(x) }\FunctionTok{round}\NormalTok{(x, }\DecValTok{4}\NormalTok{)))}
+
+\CommentTok{\# Display formatted table}
+\NormalTok{mean\_ci }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable}\NormalTok{(}
+    \AttributeTok{caption  =} \StringTok{"Mean serum creatinine level (log10{-}transformed, mg/dL) with 95\% confidence intervals, stratified by diabetes status."}\NormalTok{,}
+    \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Diabetes Status"}\NormalTok{, }\StringTok{"N"}\NormalTok{, }\StringTok{"Mean"}\NormalTok{, }\StringTok{"SD"}\NormalTok{, }\StringTok{"SE"}\NormalTok{, }\StringTok{"95\% CI Lower"}\NormalTok{, }\StringTok{"95\% CI Upper"}\NormalTok{),}
+    \AttributeTok{booktabs  =} \ConstantTok{TRUE}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"hold\_position"}\NormalTok{, }\StringTok{"striped"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[t]{lrrrrrr}
+\caption{\label{tab:task-d-mean-ci}Mean serum creatinine level (log10-transformed, mg/dL) with 95% confidence intervals, stratified by diabetes status.}\\
+\toprule
+Diabetes Status & N & Mean & SD & SE & 95\% CI Lower & 95\% CI Upper\\
+\midrule
+\cellcolor{gray!10}{No Diabetes} & \cellcolor{gray!10}{171} & \cellcolor{gray!10}{0.0756} & \cellcolor{gray!10}{0.1813} & \cellcolor{gray!10}{0.0139} & \cellcolor{gray!10}{0.0482} & \cellcolor{gray!10}{0.1029}\\
+Diabetes & 123 & 0.0678 & 0.1528 & 0.0138 & 0.0405 & 0.0951\\
+\bottomrule
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-e-distribution-of-creatinine-levels-by-diabetes-status}{%
+\section{Task (e): Distribution of Creatinine Levels by Diabetes
+Status}\label{task-e-distribution-of-creatinine-levels-by-diabetes-status}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{overall\_mean }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(creatinine}\SpecialCharTok{$}\NormalTok{Creatinine\_serum, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+
+\FunctionTok{ggplot}\NormalTok{(creatinine, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Diabetes, }\AttributeTok{y =}\NormalTok{ Creatinine\_serum, }\AttributeTok{fill =}\NormalTok{ Diabetes)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_violin}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.45}\NormalTok{, }\AttributeTok{trim =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{colour =} \StringTok{"grey40"}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.18}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.85}\NormalTok{, }\AttributeTok{outlier.shape =} \ConstantTok{NA}\NormalTok{,}
+               \AttributeTok{colour =} \StringTok{"grey20"}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_jitter}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{colour =}\NormalTok{ Diabetes), }\AttributeTok{width =} \FloatTok{0.08}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.35}\NormalTok{, }\AttributeTok{size =} \FloatTok{1.0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept =}\NormalTok{ overall\_mean, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{,}
+             \AttributeTok{colour =} \StringTok{"grey40"}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{, }\AttributeTok{x =} \FloatTok{0.57}\NormalTok{, }\AttributeTok{y =}\NormalTok{ overall\_mean }\SpecialCharTok{+} \FloatTok{0.03}\NormalTok{,}
+           \AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Overall mean = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(overall\_mean, }\DecValTok{3}\NormalTok{)),}
+           \AttributeTok{size =} \FloatTok{3.0}\NormalTok{, }\AttributeTok{colour =} \StringTok{"grey30"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values  =} \FunctionTok{c}\NormalTok{(}\StringTok{"No Diabetes"} \OtherTok{=} \StringTok{"\#4E9BB5"}\NormalTok{, }\StringTok{"Diabetes"} \OtherTok{=} \StringTok{"\#D4706A"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_colour\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"No Diabetes"} \OtherTok{=} \StringTok{"\#2B6A80"}\NormalTok{, }\StringTok{"Diabetes"} \OtherTok{=} \StringTok{"\#A03030"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title    =} \StringTok{"Distribution of Serum Creatinine by Diabetes Status"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"log\textbackslash{}u2081\textbackslash{}u2080{-}transformed values (mg/dL)"}\NormalTok{,}
+    \AttributeTok{x        =} \StringTok{"Diabetes Status"}\NormalTok{,}
+    \AttributeTok{y        =} \FunctionTok{expression}\NormalTok{(log[}\DecValTok{10}\NormalTok{] }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Creatinine }\SpecialCharTok{\textasciitilde{}}\NormalTok{ (mg}\SpecialCharTok{/}\NormalTok{dL)),}
+    \AttributeTok{fill     =} \StringTok{"Diabetes Status"}\NormalTok{,}
+    \AttributeTok{colour   =} \StringTok{"Diabetes Status"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{plot.title    =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"bold"}\NormalTok{, }\AttributeTok{size =} \DecValTok{13}\NormalTok{),}
+    \AttributeTok{plot.subtitle =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{10}\NormalTok{, }\AttributeTok{colour =} \StringTok{"grey40"}\NormalTok{),}
+    \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{,}
+    \AttributeTok{axis.title    =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"bold"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{Problem1_Creatinine_files/figure-latex/task-e-distribution-plot-1} 
+
+}
+
+\caption{Distribution of log10-transformed serum creatinine levels by diabetes status. Violin plots show the full distribution; overlaid box plots indicate the median and interquartile range; individual data points are jittered. The horizontal dashed line marks the overall cohort mean.}\label{fig:task-e-distribution-plot}
+\end{figure}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-f-creatinine-as-a-function-of-age-by-diabetes-status}{%
+\section{Task (f): Creatinine as a Function of Age, by Diabetes
+Status}\label{task-f-creatinine-as-a-function-of-age-by-diabetes-status}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(creatinine, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Age, }\AttributeTok{y =}\NormalTok{ Creatinine\_serum, }\AttributeTok{colour =}\NormalTok{ Diabetes)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.45}\NormalTok{, }\AttributeTok{size =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"loess"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.9}\NormalTok{, }\AttributeTok{fill =} \StringTok{"grey80"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{,   }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{,}
+              \AttributeTok{linewidth =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{colour =} \StringTok{"grey30"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ Diabetes, }\AttributeTok{labeller =}\NormalTok{ label\_both) }\SpecialCharTok{+}
+  \FunctionTok{scale\_colour\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"No Diabetes"} \OtherTok{=} \StringTok{"\#4E9BB5"}\NormalTok{, }\StringTok{"Diabetes"} \OtherTok{=} \StringTok{"\#D4706A"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title    =} \StringTok{"Serum Creatinine as a Function of Age by Diabetes Status"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Solid line: LOESS smoother (95\% CI shaded); Dashed line: OLS linear fit"}\NormalTok{,}
+    \AttributeTok{x        =} \StringTok{"Age (years)"}\NormalTok{,}
+    \AttributeTok{y        =} \FunctionTok{expression}\NormalTok{(log[}\DecValTok{10}\NormalTok{] }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Creatinine }\SpecialCharTok{\textasciitilde{}}\NormalTok{ (mg}\SpecialCharTok{/}\NormalTok{dL)),}
+    \AttributeTok{colour   =} \StringTok{"Diabetes Status"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{(}\AttributeTok{base\_size =} \DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{plot.title    =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"bold"}\NormalTok{, }\AttributeTok{size =} \DecValTok{13}\NormalTok{),}
+    \AttributeTok{plot.subtitle =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FloatTok{9.5}\NormalTok{, }\AttributeTok{colour =} \StringTok{"grey40"}\NormalTok{),}
+    \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{,}
+    \AttributeTok{strip.text    =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"bold"}\NormalTok{),}
+    \AttributeTok{axis.title    =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"bold"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.9\linewidth]{Problem1_Creatinine_files/figure-latex/task-f-scatter-smooth-1} 
+
+}
+
+\caption{Serum creatinine level (log10-transformed, mg/dL) as a function of age, stratified by diabetes status. Smoothing curves (LOESS, 95\% confidence bands shaded) are superimposed on the individual data points. Each panel corresponds to one diabetes stratum.}\label{fig:task-f-scatter-smooth}
+\end{figure}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{task-g-linear-regression-of-creatinine-on-age-by-diabetes-status}{%
+\section{Task (g): Linear Regression of Creatinine on Age, by Diabetes
+Status}\label{task-g-linear-regression-of-creatinine-on-age-by-diabetes-status}}
+
+\hypertarget{model-for-patients-without-diabetes}{%
+\subsection{Model for Patients Without
+Diabetes}\label{model-for-patients-without-diabetes}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Subset: patients without diabetes}
+\NormalTok{df\_nodiab }\OtherTok{\textless{}{-}}\NormalTok{ creatinine }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(Diabetes }\SpecialCharTok{==} \StringTok{"No Diabetes"}\NormalTok{)}
+
+\CommentTok{\# Fit linear model}
+\NormalTok{lm\_nodiab }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Creatinine\_serum }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age, }\AttributeTok{data =}\NormalTok{ df\_nodiab)}
+
+\CommentTok{\# Tidy regression table}
+\NormalTok{tidy\_nodiab }\OtherTok{\textless{}{-}} \FunctionTok{tidy}\NormalTok{(lm\_nodiab, }\AttributeTok{conf.int =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{conf.level =} \FloatTok{0.95}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), \textbackslash{}(x) }\FunctionTok{round}\NormalTok{(x, }\DecValTok{5}\NormalTok{)))}
+
+\NormalTok{tidy\_nodiab }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable}\NormalTok{(}
+    \AttributeTok{caption   =} \StringTok{"Linear regression of serum creatinine on age in patients WITHOUT diabetes (n = 159). Estimates are in log10{-}transformed creatinine units per year of age."}\NormalTok{,}
+    \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Term"}\NormalTok{, }\StringTok{"Estimate"}\NormalTok{, }\StringTok{"Std. Error"}\NormalTok{, }\StringTok{"t{-}statistic"}\NormalTok{, }\StringTok{"p{-}value"}\NormalTok{, }\StringTok{"95\% CI Lower"}\NormalTok{, }\StringTok{"95\% CI Upper"}\NormalTok{),}
+    \AttributeTok{booktabs  =} \ConstantTok{TRUE}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"hold\_position"}\NormalTok{, }\StringTok{"striped"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[t]{lrrrrrr}
+\caption{\label{tab:task-g-lm-nodiabetes}Linear regression of serum creatinine on age in patients WITHOUT diabetes (n = 159). Estimates are in log10-transformed creatinine units per year of age.}\\
+\toprule
+Term & Estimate & Std. Error & t-statistic & p-value & 95\% CI Lower & 95\% CI Upper\\
+\midrule
+\cellcolor{gray!10}{(Intercept)} & \cellcolor{gray!10}{-0.19392} & \cellcolor{gray!10}{0.06576} & \cellcolor{gray!10}{-2.94893} & \cellcolor{gray!10}{0.00364} & \cellcolor{gray!10}{-0.32373} & \cellcolor{gray!10}{-0.06410}\\
+Age & 0.00436 & 0.00104 & 4.18356 & 0.00005 & 0.00230 & 0.00642\\
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Model summary statistics}
+\FunctionTok{glance}\NormalTok{(lm\_nodiab) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(r.squared, adj.r.squared, sigma, statistic, p.value, df, nobs) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), \textbackslash{}(x) }\FunctionTok{round}\NormalTok{(x, }\DecValTok{5}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable}\NormalTok{(}
+    \AttributeTok{caption   =} \StringTok{"Model summary statistics for the no{-}diabetes group."}\NormalTok{,}
+    \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"R²"}\NormalTok{, }\StringTok{"Adj. R²"}\NormalTok{, }\StringTok{"Residual SE"}\NormalTok{, }\StringTok{"F{-}statistic"}\NormalTok{, }\StringTok{"p{-}value"}\NormalTok{, }\StringTok{"df"}\NormalTok{, }\StringTok{"N"}\NormalTok{),}
+    \AttributeTok{booktabs  =} \ConstantTok{TRUE}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"hold\_position"}\NormalTok{, }\StringTok{"striped"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[t]{rrrrrrr}
+\caption{\label{tab:task-g-lm-nodiabetes}Model summary statistics for the no-diabetes group.}\\
+\toprule
+R² & Adj. R² & Residual SE & F-statistic & p-value & df & N\\
+\midrule
+\cellcolor{gray!10}{0.09384} & \cellcolor{gray!10}{0.08848} & \cellcolor{gray!10}{0.17309} & \cellcolor{gray!10}{17.50214} & \cellcolor{gray!10}{5e-05} & \cellcolor{gray!10}{1} & \cellcolor{gray!10}{171}\\
+\bottomrule
+\end{longtable}
+
+\textbf{Interpretation (No Diabetes):} A positive association between
+age and serum creatinine was observed in patients without diabetes. For
+each additional year of age, serum creatinine
+(log\textsubscript{10}-transformed) changes by \textbf{0.00436} units
+(95\% CI: 0.0023 to 0.00642), with a p-value of 0.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{model-for-patients-with-diabetes}{%
+\subsection{Model for Patients With
+Diabetes}\label{model-for-patients-with-diabetes}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Subset: patients with diabetes}
+\NormalTok{df\_diab }\OtherTok{\textless{}{-}}\NormalTok{ creatinine }\SpecialCharTok{|\textgreater{}} \FunctionTok{filter}\NormalTok{(Diabetes }\SpecialCharTok{==} \StringTok{"Diabetes"}\NormalTok{)}
+
+\CommentTok{\# Fit linear model}
+\NormalTok{lm\_diab }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Creatinine\_serum }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Age, }\AttributeTok{data =}\NormalTok{ df\_diab)}
+
+\CommentTok{\# Tidy regression table}
+\NormalTok{tidy\_diab }\OtherTok{\textless{}{-}} \FunctionTok{tidy}\NormalTok{(lm\_diab, }\AttributeTok{conf.int =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{conf.level =} \FloatTok{0.95}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), \textbackslash{}(x) }\FunctionTok{round}\NormalTok{(x, }\DecValTok{5}\NormalTok{)))}
+
+\NormalTok{tidy\_diab }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable}\NormalTok{(}
+    \AttributeTok{caption   =} \StringTok{"Linear regression of serum creatinine on age in patients WITH diabetes (n = 135). Estimates are in log10{-}transformed creatinine units per year of age."}\NormalTok{,}
+    \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Term"}\NormalTok{, }\StringTok{"Estimate"}\NormalTok{, }\StringTok{"Std. Error"}\NormalTok{, }\StringTok{"t{-}statistic"}\NormalTok{, }\StringTok{"p{-}value"}\NormalTok{, }\StringTok{"95\% CI Lower"}\NormalTok{, }\StringTok{"95\% CI Upper"}\NormalTok{),}
+    \AttributeTok{booktabs  =} \ConstantTok{TRUE}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"hold\_position"}\NormalTok{, }\StringTok{"striped"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[t]{lrrrrrr}
+\caption{\label{tab:task-g-lm-diabetes}Linear regression of serum creatinine on age in patients WITH diabetes (n = 135). Estimates are in log10-transformed creatinine units per year of age.}\\
+\toprule
+Term & Estimate & Std. Error & t-statistic & p-value & 95\% CI Lower & 95\% CI Upper\\
+\midrule
+\cellcolor{gray!10}{(Intercept)} & \cellcolor{gray!10}{-0.06302} & \cellcolor{gray!10}{0.07806} & \cellcolor{gray!10}{-0.80724} & \cellcolor{gray!10}{0.42111} & \cellcolor{gray!10}{-0.21757} & \cellcolor{gray!10}{0.09153}\\
+Age & 0.00220 & 0.00129 & 1.70213 & 0.09130 & -0.00036 & 0.00476\\
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Model summary statistics}
+\FunctionTok{glance}\NormalTok{(lm\_diab) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(r.squared, adj.r.squared, sigma, statistic, p.value, df, nobs) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), \textbackslash{}(x) }\FunctionTok{round}\NormalTok{(x, }\DecValTok{5}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable}\NormalTok{(}
+    \AttributeTok{caption   =} \StringTok{"Model summary statistics for the diabetes group."}\NormalTok{,}
+    \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"R²"}\NormalTok{, }\StringTok{"Adj. R²"}\NormalTok{, }\StringTok{"Residual SE"}\NormalTok{, }\StringTok{"F{-}statistic"}\NormalTok{, }\StringTok{"p{-}value"}\NormalTok{, }\StringTok{"df"}\NormalTok{, }\StringTok{"N"}\NormalTok{),}
+    \AttributeTok{booktabs  =} \ConstantTok{TRUE}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"hold\_position"}\NormalTok{, }\StringTok{"striped"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[t]{rrrrrrr}
+\caption{\label{tab:task-g-lm-diabetes}Model summary statistics for the diabetes group.}\\
+\toprule
+R² & Adj. R² & Residual SE & F-statistic & p-value & df & N\\
+\midrule
+\cellcolor{gray!10}{0.02338} & \cellcolor{gray!10}{0.01531} & \cellcolor{gray!10}{0.15162} & \cellcolor{gray!10}{2.89725} & \cellcolor{gray!10}{0.0913} & \cellcolor{gray!10}{1} & \cellcolor{gray!10}{123}\\
+\bottomrule
+\end{longtable}
+
+\textbf{Interpretation (Diabetes):} In patients with diabetes, age is
+positively associated with serum creatinine. Each additional year of age
+corresponds to a change of \textbf{0.0022} log\textsubscript{10}-units
+(95\% CI: \ensuremath{-3.6\times 10^{-4}} to 0.00476; p = 0.0913).
+
+\end{document}
